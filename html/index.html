@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pràctica Proxy Nginx</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .node-info { background: #e7f3ff; padding: 15px; border-radius: 8px; border: 2px solid #007bff; display: inline-block; margin-bottom: 20px; min-width: 250px; }
+        h1 { color: #333; }
+        .media-section { margin: 30px 0; padding: 20px; border-top: 1px solid #eee; }
+        video, img { border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: block; margin: 15px auto; max-width: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pràctica de Proxies amb Nginx</h1>
+        <p>Aquest lloc utilitza un clúster d'Apache amb balanceig Round Robin.</p>
+        
+        <div class="node-info">
+            Aquest node és: <span id="node-name" style="font-weight: bold; color: #007bff;">CARREGANT...</span>
+        </div>
+        
+        <p><em>(Refresca la pàgina amb F5 per veure el balanceig entre nodes)</em></p>
+        
+        <div class="media-section">
+            <h2>Imatge de prova (test-image.jpg)</h2>
+            <img src="test-image.jpg" alt="Imatge de prova" width="500" id="img">
+        </div>
+
+        <div class="media-section">
+            <h2>Vídeo de la pràctica (videoplayback.mp4)</h2>
+            <video width="560" height="315" controls id="vid">
+                <source src="videoplayback.mp4" type="video/mp4">
+                El teu navegador no suporta vídeos locals.
+            </video>
+        </div>
+    </div>
+
+    <script>
+        // Check del Node (Balanceig) llegint les capçaleres de Nginx
+        fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
+            .then(res => {
+                const node = res.headers.get('X-Upstream') || 'Desconegut';
+                document.getElementById('node-name').textContent = node;
+            })
+            .catch(() => { document.getElementById('node-name').textContent = "Error de connexió"; });
+
+        // Afegim timestamp a la imatge per forçar la càrrega si la canvies manualment
+        document.getElementById('img').src += "?t=" + new Date().getTime();
+    </script>
+</body>
+</html>
